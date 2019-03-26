@@ -15,13 +15,11 @@ app.config.from_pyfile( 'epcconfig.py' )
 
 postcode_url_template='https://epc.opendatacommunities.org/api/v1/domestic/search?postcode={post}'
 address_url_template='https://epc.opendatacommunities.org/api/v1/domestic/search?address={add}'
-#combined_url_template='https://epc.opendatacommunities.org/api/v1/domestic/search?address={add}&postcode={post}'
-#epc_url='https://epc.opendatacommunities.org/api/v1/domestic/search'
 
-@app.route( '/epc' , methods=[ 'GET' ])
-def epcchart():
-    my_postcode= request.args.get( 'post' , 'SG36DE' )
-    epc_url = postcode_url_template.format(post=my_postcode)
+
+@app.route( '/epcchart/<postcode>' , methods=[ 'GET' ])
+def epcchart(postcode):
+    epc_url = postcode_url_template.format(post=postcode)
     Auth=app.config['BASIC_AUTH']
     #header={'Accept':'text/csv', 'Authorization': 'Basic %s' %Auth}
     header={'Accept':'application/json', 'Authorization': 'Basic %s' %Auth}
@@ -60,7 +58,7 @@ def epcchart():
                     y=values
                     )],
                     layout=dict(
-                        title='Current Energy Efficiency in {}'.format(my_postcode)
+                        title='Current Energy Efficiency in {}'.format(postcode)
                 )
                 )
                 ]
@@ -104,25 +102,6 @@ def epc_dwelling(address):
         print(resp.reason)
     return jsonify(epc)
 
-#@app.route('/epc/property/<address>&<postcode>/', methods=['GET'])
-#def epc_dwelling(address,postcode):
-#    response={address:'Address not found!'}
-    #response={postcode: 'Postcode not found!'}
-#    my_address= request.args.get( 'add' , address)
-#    my_postcode = request.args.get( 'post' , postcode)
-#    epc_url = combined_url_template.format(add=my_address,post=my_postcode)
-#    Auth=app.config['BASIC_AUTH']
-#    #header={'Accept':'text/csv', 'Authorization': 'Basic %s' %Auth}
-#    header={'Accept':'application/json', 'Authorization': 'Basic %s' %Auth}
-#    resp = requests.get(epc_url,headers=header)
-#
-#    if resp.ok:
-#        resp = requests.get(epc_url,headers=header)
-#        epc=resp.json()
-#        #pprint(epc)
-#    else:
-#        print(resp.reason)
-#    return jsonify(epc)
 
 if __name__=="__main__":
     app.run(port=8080, debug=True)
