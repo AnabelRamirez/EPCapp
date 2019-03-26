@@ -7,10 +7,11 @@ import requests
 from pprint import pprint
 import requests_cache
 from cassandra.cluster import Cluster
+import datetime
 
 
-#cluster= Cluster(['cassandra'])
-
+cluster= Cluster(['cassandra'])
+session=cluster.connect()
 app = Flask(__name__,instance_relative_config=True)
 app.config.from_object('epcconfig')
 app.config.from_pyfile('epcconfig.py')
@@ -18,9 +19,12 @@ app.config.from_pyfile('epcconfig.py')
 postcode_url_template='https://epc.opendatacommunities.org/api/v1/domestic/search?postcode={post}'
 address_url_template='https://epc.opendatacommunities.org/api/v1/domestic/search?address={add}'
 
-
-@app.route( '/epcchart/<postcode>' , methods=[ 'GET' ])
+@app.route( '/epcchart/<postcode>/' , methods=[ 'GET' ])
 def epcchart(postcode):
+    #get time stamp:
+    time=datetime.datetime.now()
+    #store request in the cassandra database:
+    rows=session.execute("""Insert into epc.requests(timestamp,postcode,address) values ({},{},'')""".format(time,postcode))
     epc_url = postcode_url_template.format(post=postcode)
     Auth=app.config['BASIC_AUTH']
     #header={'Accept':'text/csv', 'Authorization': 'Basic %s' %Auth}
@@ -72,6 +76,10 @@ def epcchart(postcode):
 
 @app.route('/epc/postcode/<postcode>/', methods=['GET'])
 def epc(postcode):
+    #get time stamp:
+    time=datetime.datetime.now()
+    #store request in the cassandra database:
+    rows=session.execute("""Insert into epc.requests(timestamp,postcode,address) values ({},{},'')""".format(time,postcode))
     response={postcode:'Not Found!'}
     epc_url = postcode_url_template.format(post=postcode)
     Auth=app.config['BASIC_AUTH']
@@ -89,6 +97,10 @@ def epc(postcode):
 
 @app.route('/epc/address/<address>/', methods=['GET'])
 def epc_dwelling(address):
+    #get time stamp:
+    time=datetime.datetime.now()
+    #store request in the cassandra database:
+    rows=session.execute("""Insert into epc.requests(timestamp,postcode,address) values ({},'',{})""".format(time,address))
     response={address:'Not Found!'}
     epc_url = address_url_template.format(add=address)
     Auth=app.config['BASIC_AUTH']
