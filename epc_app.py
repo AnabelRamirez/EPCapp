@@ -9,7 +9,8 @@ import requests_cache
 from cassandra.cluster import Cluster
 
 #cluster= Cluster(['cassandra'])
-app = Flask(__name__, instance_relative_config=True)
+my_instance_location = os.path.join(os.path.abspath(__file__),'../instance')
+app = Flask(__name__, instance_path=my_instance_location,instance_relative_config=True)
 app.config.from_object( 'epcconfig' )
 app.config.from_pyfile( 'epcconfig.py' )
 
