@@ -7,13 +7,13 @@ import requests
 from pprint import pprint
 import requests_cache
 from cassandra.cluster import Cluster
-import os
+
 
 #cluster= Cluster(['cassandra'])
-my_instance_location = os.path.join(os.path.abspath(__file__),'../instance')
-app = Flask(__name__, instance_path=my_instance_location,instance_relative_config=True)
-app.config.from_object( 'epcconfig' )
-app.config.from_pyfile( 'epcconfig.py' )
+
+app = Flask(__name__,instance_relative_config=True)
+app.config.from_object('epcconfig')
+app.config.from_pyfile('epcconfig.py')
 
 postcode_url_template='https://epc.opendatacommunities.org/api/v1/domestic/search?postcode={post}'
 address_url_template='https://epc.opendatacommunities.org/api/v1/domestic/search?address={add}'
