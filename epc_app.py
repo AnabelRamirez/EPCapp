@@ -7,6 +7,7 @@ import requests
 from pprint import pprint
 import requests_cache
 from cassandra.cluster import Cluster
+import os
 
 #cluster= Cluster(['cassandra'])
 my_instance_location = os.path.join(os.path.abspath(__file__),'../instance')
