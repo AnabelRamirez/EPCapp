@@ -1,0 +1,9 @@
+pip>=9.0.1
+
+Flask==0.12.2
+
+requests
+requests-cache
+plotly
+
+cassandra-driver
