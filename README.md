@@ -6,6 +6,8 @@ This app uses the [Domestic Energy Performance Certificates API](https://epc.ope
 
 This app requires:
 * Python 3.4 and above
+* Docker
+
 
 ## Getting Started
 
@@ -50,9 +52,31 @@ curl -i http://localhost:5000/epc/address/2 alma road
 
 To deploy on a live system:
 
-
+* Build a docker image for this project using the [Dockerfile](https://github.com/AnabelRamirez/EPCapp/blob/master/Dockerfile) and uploaded to the desires repository. In my case I have used gcr.io in Google repository.
 ```
-Give an example
+docker build . --tag=epc_app_image:v1
+docker push gcr.io/GOOGLE_PROJECT_ID/epc_app_image:v1
+```
+* Also build a cassandra container image
+```
+docker pull cassandra:latest
+docker run --name cassandra-test -d cassandra:latest
+```
+* Create a cluster in Google Cloud.
+```
+gcloud container clusters create anabe-cluster --num-nodes=3
+```
+* Deploy the app in the cluster using kubernetes and a basic ingress procedure, exposing port 8080:
+```
+kubectl apply -f basic-ingress.yaml
+kubectl get ingress basic-ingress
+```
+* Create the cassandra ring and scale up to 3 replicas
+```
+kubectl create -f cassandra-peer-service.yml
+kubectl create -f cassandra-service.yml
+kubectl create -f cassandra-replication-controller.yml
+kubectl scale rc cassandra --replicas=3
 ```
 
 ## Built With
