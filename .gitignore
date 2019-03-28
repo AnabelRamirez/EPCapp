@@ -2,6 +2,6 @@
 flask_venv/
 
 #the instance/folder containing my secret stuff
-
+instance/
 
 #anything else we want git to ignore
