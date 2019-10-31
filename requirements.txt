@@ -1,6 +1,6 @@
 pip>=9.0.1
 
-Flask==0.12.2
+Flask==1.0
 
 requests
 requests-cache
